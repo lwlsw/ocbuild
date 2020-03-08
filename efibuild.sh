@@ -17,8 +17,14 @@ prompt() {
 
 updaterepo() {
   if [ ! -d "$2" ]; then
-    #git clone "$1" -b "$3" --depth=1 "$2" || exit 1
-    git clone "$1" -b "$3" "$2" || exit 1
+    echo "拉取 $2 库"
+    if [ "$4" -gt 0 ]; then
+        echo "拉取所有commit"
+        git clone "$1" -b "$3" "$2" || exit 1
+    else
+        echo "拉取最近一条commit"
+        git clone "$1" -b "$3" --depth=1 "$2" || exit 1
+    fi
   fi
   pushd "$2" >/dev/null
   git pull
@@ -174,7 +180,7 @@ fi
 
 deps="${#DEPNAMES[@]}"
 for ((i=0; $i<$deps; i++)); do
-  updaterepo "${DEPURLS[$i]}" "${DEPNAMES[$i]}" "${DEPBRANCHES[$i]}" || exit 1
+  updaterepo "${DEPURLS[$i]}" "${DEPNAMES[$i]}" "${DEPBRANCHES[$i]}" "${DEPdepth[$i]}" || exit 1
 done
 
 if [ ! -d "${SELFPKG}" ]; then
