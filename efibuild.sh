@@ -21,6 +21,8 @@ updaterepo() {
     if [ "$4" -gt 0 ]; then
         echo "拉取所有commit"
         git clone "$1" -b "$3" "$2" || exit 1
+        echo "取出 $5"
+        git checkout "$5"
     else
         echo "拉取最近一条commit"
         git clone "$1" -b "$3" --depth=1 "$2" || exit 1
@@ -180,7 +182,7 @@ fi
 
 deps="${#DEPNAMES[@]}"
 for ((i=0; $i<$deps; i++)); do
-  updaterepo "${DEPURLS[$i]}" "${DEPNAMES[$i]}" "${DEPBRANCHES[$i]}" "${DEPdepth[$i]}" || exit 1
+  updaterepo "${DEPURLS[$i]}" "${DEPNAMES[$i]}" "${DEPBRANCHES[$i]}" "${DEPdepth[$i]}" "${DEPcommit[$i]}" || exit 1
 done
 
 if [ ! -d "${SELFPKG}" ]; then
