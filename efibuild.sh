@@ -18,11 +18,9 @@ prompt() {
 updaterepo() {
   if [ ! -d "$2" ]; then
     echo "拉取 $2 库"
-    if [ "$4" -gt 0 ]; then
+    if [ "$4" ]; then
         echo "拉取所有commit"
         git clone "$1" -b "$3" "$2" || exit 1
-        echo "取出 $5"
-        git checkout "$5"
     else
         echo "拉取最近一条commit"
         git clone "$1" -b "$3" --depth=1 "$2" || exit 1
@@ -38,6 +36,11 @@ updaterepo() {
       exit 1
     fi
   fi
+  if [ "$4" ]; then
+      echo "取出 $4"
+      git checkout "$4"
+  fi
+
   popd >/dev/null
 }
 
@@ -182,7 +185,7 @@ fi
 
 deps="${#DEPNAMES[@]}"
 for ((i=0; $i<$deps; i++)); do
-  updaterepo "${DEPURLS[$i]}" "${DEPNAMES[$i]}" "${DEPBRANCHES[$i]}" "${DEPdepth[$i]}" "${DEPcommit[$i]}" || exit 1
+  updaterepo "${DEPURLS[$i]}" "${DEPNAMES[$i]}" "${DEPBRANCHES[$i]}" "${DEPcommit[$i]}" || exit 1
 done
 
 if [ ! -d "${SELFPKG}" ]; then
